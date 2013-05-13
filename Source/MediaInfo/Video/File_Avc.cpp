@@ -14,6 +14,7 @@
 
 //---------------------------------------------------------------------------
 #include "MediaInfo/Setup.h"
+#include <iostream>
 //---------------------------------------------------------------------------
 
 //***************************************************************************
@@ -412,7 +413,8 @@ void File_Avc::Streams_Fill(std::vector<seq_parameter_set_struct*>::iterator seq
         bool   cbr_flag_IsSet=false;
         bool   cbr_flag_IsValid=true;
         seq_parameter_set_struct::vui_parameters_struct::xxl* NAL=(*seq_parameter_set_Item)->vui_parameters->NAL;
-        if (NAL)
+        if (NAL) {
+//	  cout << "1 bit rate value: " << bit_rate_value <<"\n";
             for (size_t Pos=0; Pos<NAL->SchedSel.size(); Pos++)
             {
                 if (NAL->SchedSel[Pos].cpb_size_value!=(int32u)-1)
@@ -429,13 +431,16 @@ void File_Avc::Streams_Fill(std::vector<seq_parameter_set_struct*>::iterator seq
                     cbr_flag_IsSet=true;
                 }
             }
+//	  cout << "2 bit rate value: " << bit_rate_value <<"\n";
+	}
         seq_parameter_set_struct::vui_parameters_struct::xxl* VCL=(*seq_parameter_set_Item)->vui_parameters->VCL;
-        if (VCL)
+        if (VCL) {
+//	  cout << "3 bit rate value: " << bit_rate_value <<"\n";
             for (size_t Pos=0; Pos<VCL->SchedSel.size(); Pos++)
             {
                 Fill(Stream_Video, 0, Video_BufferSize, VCL->SchedSel[Pos].cpb_size_value);
-                if (bit_rate_value!=(int32u)-1 && bit_rate_value!=VCL->SchedSel[Pos].bit_rate_value)
-                    bit_rate_value_IsValid=false;
+                /*if (bit_rate_value!=(int32u)-1 && bit_rate_value!=VCL->SchedSel[Pos].bit_rate_value)
+		  bit_rate_value_IsValid=false;*/
                 if (bit_rate_value==(int32u)-1)
                     bit_rate_value=VCL->SchedSel[Pos].bit_rate_value;
                 if (cbr_flag_IsSet==true && cbr_flag!=VCL->SchedSel[Pos].cbr_flag)
@@ -446,6 +451,11 @@ void File_Avc::Streams_Fill(std::vector<seq_parameter_set_struct*>::iterator seq
                     cbr_flag_IsSet=true;
                 }
             }
+	}
+/*	cout << "bit rate value: " << bit_rate_value
+	     << " cbr_flag " << cbr_flag
+	     << " cbr_flag_IsSet && cbr_flag_IsValid " << cbr_flag_IsSet << " " << cbr_flag_IsValid
+	     << " bit_rate_value_IsValid " << bit_rate_value_IsValid <<"\n";*/
         if (cbr_flag_IsSet && cbr_flag_IsValid)
         {
             Fill(Stream_Video, 0, Video_BitRate_Mode, cbr_flag?"CBR":"VBR");
