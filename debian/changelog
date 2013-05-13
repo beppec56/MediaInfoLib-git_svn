@@ -1,4 +1,8 @@
-libmediainfo (0.7.63-1) unstable; urgency=low
+libmediainfo (0.7.63-1hs1) unstable; urgency=low
+  [debian] Update version to my specific one
+  * Some hack to display VBV_MAX for AVC
+
+ -- c g <g.c@hs.it>  Mon, 13 May 2013 20:36:57 +0002
 
   * See History.txt for more info and real dates
 
